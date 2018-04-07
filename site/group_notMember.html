@@ -1038,7 +1038,17 @@
     const token = web3.eth.contract(tokenABI).at(tokenAddress);
 
     // add token / registry interaction here
-
+    registry.listings(userAddress, resp => {
+      if(resp !== null) {
+        document.location.replace('/group_asMember.html');
+      }
+    });
+    token.allowance(userAddress, registryAddress, resp => {
+      console.log('allowance is ' + resp);
+      if(resp === null) {
+        document.location.replace('/allowance.html');
+      }
+    });
   </script>
 
 </body>
