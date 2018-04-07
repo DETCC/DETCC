@@ -29,7 +29,7 @@ contract Factory {
         emit DeployedToken(token);
 
         PLCRVoting plcr = plcrFactory.create(token);
-        emit DeployedPLCR(token);
+        emit DeployedPLCR(plcr);
 
         return (token, plcr);
     }
@@ -44,8 +44,8 @@ contract Factory {
         return (parameterizer, registry);
     }
 
-    event DeployedToken(address);
-    event DeployedPLCR(address);
-    event DeployedParameterizer(address);
-    event DeployedRegistry(address);
+    event DeployedToken(address tokenAddress);
+    event DeployedPLCR(address plcrAddress);
+    event DeployedParameterizer(address parameterizerAddress);
+    event DeployedRegistry(address registryAddress);
 }
