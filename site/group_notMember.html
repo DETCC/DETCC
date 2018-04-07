@@ -784,7 +784,7 @@
         "type": "function"
       }
     ];
-    const registryAddress = '0x134456a7d4fe90448775d940bdac98809c100c50';
+    const registryAddress = '0xbbf962cdb45c655959d5cc5caa7e5c1fa0a31345';
 
     // prettier-ignore
     const tokenABI = [
@@ -1027,7 +1027,7 @@
         "type": "function"
       }
     ];
-    const tokenAddress = '0xfd809de9855709ef60dbb81a7b8aac7569304dcf';
+    const tokenAddress = '0x92e31461ba89e16966c5cadfe2cf9a778f863de9';
 
     let params = (new URL(location)).searchParams;
     console.log('registry', params.get('registry'));
@@ -1042,23 +1042,25 @@
         document.location.replace('/group_asMember.html');
       }
     });
-    token.allowance(userAddress, registryAddress, (err, res) => {
-      const allowance = res.toNumber();
-      console.log('allowance is ' + allowance);
-
-      if (allowance === 0) {
-        document.location.replace('/allowance.html');
-      }
-    });
 
     function join() {
       console.log('join');
-      registry.apply('tester123', 50, "", (err, res) => {
-        console.log('err', err);
-        console.log('res', res);
-      })
+
+      token.allowance(userAddress, registryAddress, (err, res) => {
+        const allowance = res.toNumber();
+        console.log('allowance is ' + allowance);
+
+        if (allowance === 0) {
+          document.location.replace('/allowance.html');
+        } else {
+          registry.apply(userAddress, 100, "", (err, res) => {
+            console.log('err', err);
+            console.log('res', res);
+          })
+        }
+      });
     }
-    registry.listings('test', (err, res) => {
+    registry.listings(userAddress, (err, res) => {
       console.log('err', err);
       console.log('res', res);
       console.log('owner', res[1]);
