@@ -1039,7 +1039,7 @@
 
     registry.listings(userAddress, resp => {
       if (resp !== null) {
-        document.location.replace('/group_asMember.html');
+        document.location.replace(`/group_asMember.html?token=${params.get('token')}&registry=${params.get('registry')}&plcr=${params.get('plcr')}`);
       }
     });
 

@@ -6,7 +6,6 @@
     <title>DETCC</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/web3@1.0.0-beta.33/src/index.min.js"></script> -->
     <link rel="stylesheet" href="main.css">
     <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,700" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
@@ -265,7 +264,7 @@
     };
 
     $(document).ready(() => {
-      const factoryAddress = "0xd0b56d1121ddcc02d75518ce7af1294b9cfea5ab";
+      const factoryAddress = "0xb77bb48302e4c808144d01c739dcf84f6526f594";
       const FactoryContract = web3.eth.contract(factoryAbi);
       const factory = FactoryContract.at(factoryAddress);
 

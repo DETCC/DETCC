@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hello Bulma!</title>
+  <title>DETCC</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
   <link rel="stylesheet" href="main.css">
   <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,700" rel="stylesheet">
@@ -35,6 +35,11 @@
       <a onclick="setAllowance()" class="button is-primary is-large" style="max-width:60%; margin:1em auto 0.5em;">Allow</a>
       <script>
         // prettier-ignore
+
+        const params = (new URL(location)).searchParams;
+        const registryAddress = params.get('registry');
+        const tokenAddress = params.get('token');
+
         const registryABI = [
           {
             "anonymous": false,
@@ -711,7 +716,10 @@
             "type": "function"
           }
         ];
+<<<<<<< HEAD
         const registryAddress = '0xbbf962cdb45c655959d5cc5caa7e5c1fa0a31345';
+=======
+>>>>>>> master
 
         // prettier-ignore
         const tokenABI = [
@@ -954,10 +962,13 @@
             "type": "function"
           }
         ];
+<<<<<<< HEAD
         const tokenAddress = '0x92e31461ba89e16966c5cadfe2cf9a778f863de9';
 
         let params = (new URL(location)).searchParams;
         console.log('registry', params.get('registry'));
+=======
+>>>>>>> master
 
         web3 = new Web3(web3.currentProvider);
         const userAddress = web3.eth.accounts[0];

@@ -49,6 +49,9 @@ contract Registry {
     // Maps listingHashes to associated listingHash data
     mapping(bytes32 => Listing) public listings;
 
+    // List of all active listingHashes
+    bytes32[] public listingHashes;
+
     // Global Variables
     EIP20Interface public token;
     PLCRVoting public voting;
@@ -63,7 +66,7 @@ contract Registry {
     @dev Contructor         Sets the addresses for token, voting, and parameterizer
     @param _tokenAddr       Address of the TCR's intrinsic ERC20 token
     @param _plcrAddr        Address of a PLCR voting contract for the provided token
-    @param _paramsAddr      Address of a Parameterizer contract 
+    @param _paramsAddr      Address of a Parameterizer contract
     */
     function Registry(
         address _tokenAddr,
@@ -95,6 +98,7 @@ contract Registry {
 
         // Sets owner
         Listing storage listing = listings[_listingHash];
+        listingHashes.push(_listingHash);
         listing.owner = msg.sender;
 
         // Sets apply stage end time
@@ -436,7 +440,7 @@ contract Registry {
         address owner = listing.owner;
         uint unstakedDeposit = listing.unstakedDeposit;
         delete listings[_listingHash];
-        
+
         // Transfers any remaining balance back to the owner
         if (unstakedDeposit > 0){
             require(token.transfer(owner, unstakedDeposit));
