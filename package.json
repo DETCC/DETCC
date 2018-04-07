@@ -25,8 +25,10 @@
     "ethjs-query": "0.3.2",
     "ethjs-rpc": "0.1.8",
     "ethjs-util": "0.1.4",
+    "remixd": "^0.1.8-alpha.4",
     "truffle": "4.1.5",
-    "truffle-hdwallet-provider": "0.0.3"
+    "truffle-hdwallet-provider": "0.0.3",
+    "web3": "^0.20.6"
   },
   "devDependencies": {
     "eslint": "4.15.0",
