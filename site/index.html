@@ -3,8 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
+    <title>DETCC</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/web3@1.0.0-beta.33/src/index.min.js"></script> -->
     <link rel="stylesheet" href="main.css">
     <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,700" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
@@ -17,48 +19,294 @@
 
       <h3>Group stuff</h3>
       <div class="field">
-        <label class="label">Name of your group</label>
+        <label class="label">Name</label>
         <div class="control">
-          <input class="input" type="text" placeholder="Text input">
+          <input class="input" id="group-name" type="text" placeholder="Give your group a name">
         </div>
-      </div>    
+      </div>
 
       <div class="field">
         <label class="label">Description</label>
         <div class="control">
-          <textarea class="textarea" placeholder="Textarea"></textarea>
+          <textarea class="textarea" id="group-description" placeholder="Describe your group"></textarea>
         </div>
       </div>
 
       <h3>Token specification</h3>
 
       <div class="field short">
-        <label class="label">Name of your group</label>
+        <label class="label">Name</label>
         <div class="control">
-          <input class="input" type="text" placeholder="Text input">
+          <input class="input" type="text" id="token-name" placeholder="Give your token a name">
         </div>
-      </div>    
+      </div>
 
       <div class="field short">
-        <label class="label">Name of your group</label>
+        <label class="label">Symbol</label>
         <div class="control">
-          <input class="input" type="text" placeholder="Text input">
+          <input class="input" type="text" id="token-symbol" placeholder="Give your token a ticker symbol">
         </div>
-      </div>    
+      </div>
 
-      <div class="field short">
-        <label class="label">Name of your group</label>
-        <div class="control">
-          <input class="input" type="text" placeholder="Text input">
-        </div>
-      </div>    
-
-      <a class="button is-primary is-large">Join</a>
-      <a class="button is-primary is-large is-success">Join</a>
+      <h3>Create Group</h3>
+      <p>You will need to send two transactions to create your group</p>
+      <a class="button is-primary is-large" id="create-one">Deploy First Stage</a>
+      <a class="button is-primary is-large is-disabled" id="create-two">Deploy Second Stage</a>
+      <a class="button is-primary is-large is-disabled" id="go-to-group">Go To Group</a>
     </div>
   </div>
-
-
-
   </body>
+
+  <script type="text/javascript">
+    const factoryAbi = [
+      {
+        "inputs": [
+          {
+            "name": "_tokenFactory",
+            "type": "address"
+          },
+          {
+            "name": "_plcrFactory",
+            "type": "address"
+          },
+          {
+            "name": "_parameterizerFactory",
+            "type": "address"
+          },
+          {
+            "name": "_registryFactory",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "DeployedToken",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "DeployedPLCR",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "DeployedParameterizer",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "DeployedRegistry",
+        "type": "event"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_tokenName",
+            "type": "string"
+          },
+          {
+            "name": "_tokenSymbol",
+            "type": "string"
+          }
+        ],
+        "name": "createTokenAndPLCR",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          },
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_token",
+            "type": "address"
+          },
+          {
+            "name": "_plcr",
+            "type": "address"
+          },
+          {
+            "name": "_tokenName",
+            "type": "string"
+          }
+        ],
+        "name": "createParameterizerAndRegistry",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          },
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ];
+
+    const deployStageOne = (factory, token_name, token_symbol) => {
+      return new Promise((resolve) => {
+        factory.createTokenAndPLCR(token_name, token_symbol, (err, res) => {
+          $("#create-one").addClass("is-loading");
+          const txHash = res;
+          const intervalID = setInterval(() => {
+            web3.eth.getTransactionReceipt(txHash, (err, res) => {
+              if (res != null) {
+                clearInterval(intervalID);
+                resolve();
+              }
+            })
+          })
+        });
+      })
+    };
+
+    const deployStageTwo = (factory, token, plcr, token_name) => {
+      return new Promise((resolve) => {
+        factory.createParameterizerAndRegistry(token, plcr, token_name, (err, res) => {
+          $("#create-two").addClass("is-loading");
+          const txHash = res;
+          const intervalID = setInterval(() => {
+            web3.eth.getTransactionReceipt(txHash, (err, res) => {
+              if (res != null) {
+                clearInterval(intervalID);
+                resolve();
+              }
+            })
+          })
+        });
+      })
+    };
+
+    const getTokenAddress = (factory) => {
+      return new Promise((resolve) => {
+        factory.DeployedToken((err, res) => {
+          if (!err) {
+            resolve(res.address);
+          }
+        });
+      })
+    };
+
+    const getPLCRAddress = (factory) => {
+      return new Promise((resolve) => {
+        factory.DeployedPLCR((err, res) => {
+          if (!err) {
+            resolve(res.address);
+          }
+        });
+      })
+    };
+
+    const getParameterizerAddress = (factory) => {
+      return new Promise((resolve) => {
+        factory.DeployedParameterizer((err, res) => {
+          if (!err) {
+            resolve(res.address);
+          }
+        });
+      })
+    };
+
+    const getRegistryAddress = (factory) => {
+      return new Promise((resolve) => {
+        factory.DeployedRegistry((err, res) => {
+          if (!err) {
+            resolve(res.address);
+          }
+        });
+      })
+    };
+
+    $(document).ready(() => {
+      const factoryAddress = "0x736a7cc39bda69b7c312d13930342e888cd397e5";
+      const FactoryContract = web3.eth.contract(factoryAbi);
+      const factory = FactoryContract.at(factoryAddress);
+
+      let token = getTokenAddress(factory);
+      let plcr = getPLCRAddress(factory);
+      let parameterizer = getParameterizerAddress(factory);
+      let registry = getRegistryAddress(factory);
+
+
+      $("#create-one").click(async () => {
+        const group_name = $("#group-name").val();
+        const group_description = $("#group-description").val();
+        const token_name = $("#token-name").val();
+        const token_symbol = $("#token-symbol").val();
+
+        await deployStageOne(factory, token_name, token_symbol);
+        token = await token;
+        plcr = await plcr;
+
+        $("#create-one").removeClass("is-loading");
+        $("#create-one").addClass("is-success");
+        $("#create-one").text("Deployed");
+        $("#create-two").removeClass("is-disabled");
+      });
+
+      $("#create-two").click(async () => {
+        const token_name = $("#token-name").val();
+        await deployStageTwo(factory, token, plcr, token_name);
+        parameterizer = await parameterizer;
+        registry = await registry;
+
+        $("#create-two").removeClass("is-loading");
+        $("#create-two").addClass("is-success");
+        $("#create-two").text("Deployed");
+        $("#go-to-group").removeClass("is-disabled");
+      });
+
+      $("#go-to-group").click(() => {
+        window.location.href = `members?token=${token}&registry=${registry}&plcr=${plcr}`;
+      })
+
+    })
+  </script>
 </html>
